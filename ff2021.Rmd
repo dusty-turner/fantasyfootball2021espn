@@ -1,0 +1,201 @@
+---
+title: "2020 Fantasy Football"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: rows
+    vertical_layout: fill
+params: 
+  per_id: 2
+  leagueID: 89417258
+---
+
+```{r setup, include=FALSE, cache=F}
+library(flexdashboard)
+library(tidyverse)
+library(gt)
+library(ggrepel)
+knitr::opts_chunk$set(cache = F)
+```
+
+
+```{r,cache=F}
+per_id <- params$per_id
+leagueID <- params$leagueID
+# print(leagueID)
+source("api_functions.R")
+dashboard_data <- get_dashboard_data(leagueID = leagueID,per_id = per_id)
+# set_per_id(1)
+# set_league(847888)
+```
+
+Overview
+===============================
+
+Row {data-height=50}
+-------------------------------------
+
+### 
+
+```{r}
+valueBox(value = str_c(unlist(dashboard_data$mug$team[per_id]), collapse = " & "), caption = str_c("Week ", params$per_id, " Mug (Best Team): ", dashboard_data$mug$week_points[per_id], " Points"), icon = "fa-pencil")
+```
+
+### 
+
+```{r}
+valueBox(value = str_c(unlist(dashboard_data$plunger$team[per_id]), collapse = " & "), caption = str_c("Week ", params$per_id, " Plunger (Worst Team): ", dashboard_data$plunger$week_points[per_id], " Points"), icon = "fa-pencil")
+```
+
+### 
+
+```{r include=FALSE}
+total_mug <-str_c(unlist(t(dashboard_data$mugtally %>% mutate(n = str_c(n,"<br>")))),collapse = " ")
+```
+
+
+```{r}
+valueBox(value = "Mug Tally",
+         caption = total_mug,
+         icon = "fa-pencil")
+
+```
+
+###
+
+```{r include=FALSE}
+total_plunger <-str_c(unlist(t(dashboard_data$plungertally %>% mutate(n = str_c(n,"<br>")))),collapse = " ")
+```
+
+
+```{r}
+valueBox(value = "Plunger Tally", caption = total_plunger,icon = "fa-pencil")
+
+```
+
+Row {data-height=350}
+-------------------------------------
+   
+### 
+
+```{r}
+dashboard_data$total_standings %>% select(-luck) %>% 
+  mutate(week_win_perc = round(week_win_perc,2)) %>% 
+  janitor::clean_names(case = "upper_camel") %>% 
+  arrange(-WinPerc,-WeekWinPerc) %>% 
+  gt() %>% 
+  tab_header(title = "Weekly Standings") 
+
+```   
+    
+### 
+
+```{r}
+dashboard_data$luck_chart
+```
+
+Team Performance
+===============================
+
+
+Row {data-height=130}
+-------------------------------------
+
+### Biggest Team Underperformance: `r str_c(dashboard_data$biggest_letdown$team[per_id], "\n", dashboard_data$biggest_letdown$actual[per_id], " out of ", dashboard_data$biggest_letdown$projected[per_id], " projected points")`
+
+```{r}
+gauge(dashboard_data$biggest_letdown$actual[per_id] %>% round(2), min = 0, max = dashboard_data$biggest_letdown$projected[per_id] %>% round(2), 
+      gaugeSectors(danger = c(0, dashboard_data$biggest_letdown$projected[per_id]))
+)
+
+```
+
+### Biggest Team Overperformance: `r str_c(dashboard_data$outperformance$team[per_id], "\n", dashboard_data$outperformance$actual[per_id], " out of ", dashboard_data$outperformance$projected[per_id], " projected points")`
+
+```{r}
+gauge(dashboard_data$outperformance$projected[per_id] %>% round(2), min = 0, max = dashboard_data$outperformance$actual[per_id] %>% round(2), 
+      gaugeSectors(success = c(0, dashboard_data$outperformance$actual[per_id]))
+)
+```
+
+### Worst Coach Award:  `r str_c(dashboard_data$coach_let_down$team[per_id], "\n", dashboard_data$coach_let_down$week_points[per_id], " out of ", dashboard_data$coach_let_down$best_points[per_id], " possible points")`
+
+```{r}
+gauge(dashboard_data$coach_let_down$week_points[per_id], min = 0, max = dashboard_data$coach_let_down$best_points[per_id], 
+      gaugeSectors(danger = c(0, dashboard_data$coach_let_down$best_points[per_id]))
+)
+
+```
+
+### Best Coach Award:  `r str_c(dashboard_data$best_coach$team[per_id], "\n", dashboard_data$best_coach$week_points[per_id], " out of ", dashboard_data$best_coach$best_points[per_id], " possible points")`
+
+```{r}
+gauge(dashboard_data$best_coach$week_points[per_id], min = 0, max = dashboard_data$best_coach$best_points[per_id], 
+      gaugeSectors(success = c(0, dashboard_data$best_coach$best_points[per_id]))
+)
+
+```
+
+
+Row {data-height=300}
+-------------------------------------
+    
+### Player Performance Week `r per_id`
+    
+```{r}
+dashboard_data$players_letting_down_week
+```
+    
+### Coaching Performance Week `r per_id`
+
+```{r}
+dashboard_data$letting_players_down
+```
+
+Row {data-height=300}
+-------------------------------------
+    
+### Player Performance Season
+    
+```{r}
+dashboard_data$players_letting_down_overall
+```
+    
+### Coaching Performance Season
+
+```{r}
+dashboard_data$letting_players_down
+```
+
+Team Report
+===============================
+
+Row {.tabset .tabset-fade}
+-------------------------------------
+
+``` {r, echo=FALSE, eval=TRUE}
+plots <- dashboard_data$plots
+# Create a number of tabs and associated plots based on the number of teams in the league.
+out <- lapply(seq_along(plots), function(i){
+  
+  
+  a1 <- knitr::knit_expand(text = sprintf("### %s\n", plots[[i]]$team)) # tab header, auto extracts names of `plot`
+  a2 <- knitr::knit_expand(text = "\n```{r, fig.height=10,fig.width=10}") # start r chunk
+  a3 <- knitr::knit_expand(text = sprintf("\nplots[[%d]]$plot", i)) # extract graphs by "writing" out `plots[[1]]$plot`, `plots[[1]]$plot` etc. to be rendered later
+  a4 <- knitr::knit_expand(text = "\n```\n") # end r chunk
+
+  paste(a1, a2, a3, a4, collapse = '\n') # collapse together all lines with newline separator
+
+})
+
+```
+   
+`r paste(knitr::knit(text = paste(out, collapse = '\n')))`
+   
+
+ESPN Predictions
+===============================
+
+```{r}
+dashboard_data$player_predictions_hist
+```
+
