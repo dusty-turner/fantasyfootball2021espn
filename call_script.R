@@ -35,29 +35,9 @@ run_reports <- function(leagueID, per_id = per_id, names) {
     file.copy(from=str_c("03_ff2020_reports/ffdashboard_",names,"_",per_id,".html"),
               to=str_c("../blog/static/ffdashboard_",names,"_",per_id,".html")
     )
-    # setwd("../blog")
-    # getwd()
-    # blogdown::serve_site()
-    # blogdown::stop_server()
-    # setwd("../fantasyfootball2020/")
-    # system("cd ../blog")
-    # system("git status")
-    # shell(str_c(getwd(),"/09_personal/shell1.sh"))
-    
-    # system("bash -l", input = str_c(getwd(),"/09_personal/shell1.sh"))
-    # shell(cmd = "cd ../blog", shell = "git status")
-    # shell(cmd = "git status", shell = "git")
-
   }
 
 }
 
-
-# map2(leagueIDs,rep(per_id_number,length(leagueIDs)),run_reports)
-
 purrr::walk2(.x = leagueID, .y = names,.f = ~run_reports(leagueID = .x,names = .y,per_id = per_id))
-
-# purrr::map(leagueID, ~run_reports(leagueID = .x,per_id = 1))
-# 
-# run_reports(leagueID = leagueID[1],per_id = 1)
 
