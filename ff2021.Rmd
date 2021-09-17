@@ -1,5 +1,5 @@
 ---
-title: "2020 Fantasy Football"
+title: "2021 Fantasy Football"
 output: 
   flexdashboard::flex_dashboard:
     orientation: rows
