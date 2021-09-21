@@ -41,4 +41,7 @@ run_reports <- function(leagueID, per_id = per_id, names) {
 
 purrr::walk2(.x = leagueID, .y = names,.f = ~run_reports(leagueID = .x,names = .y,per_id = per_id))
 
+system("git status")
+system("git add .")
+system('git commit -m "auto commit"')
 
