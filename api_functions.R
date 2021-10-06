@@ -1,7 +1,7 @@
 library(tidyverse)
 library(ggrepel)
 
-get_dashboard_data <- function(leagueID = 89417258, per_id = 1){
+get_dashboard_data <- function(leagueID = 89417258, per_id = 3){
 
   
 get_data <- function(leagueID = leagueID, per_id = per_id){
@@ -179,7 +179,8 @@ total_standings <-
   left_join(week_win_standings) %>% 
   relocate(contains("perc"), .after = last_col()) %>% 
   ungroup() %>% 
-  mutate(luck = (-win_perc + week_win_perc)/sqrt(2)) 
+  mutate(luck = (-win_perc + week_win_perc)/sqrt(2)) %>% 
+  mutate(across(.cols = c(win_perc, week_win_perc), .fns = ~round(.,3)))
   
 
 luck_help_df = tibble(win_perc = c(0.3,0.3,.7,.7), week_win_perc = c(0,1,1,0), labs = c("Bad","Unlucky","Good","Lucky"))

@@ -4,9 +4,9 @@ library(tidyverse)
 leagueID <- list(89417258)
 # leagueID <- list(847888,35354777,89417258,206814)
 # names <- list("jim","headshed","OA","Twitter_Guy")
-is_dusty = TRUE
+# is_dusty = TRUE
 names <- list("OA")
-per_id <- 2
+per_id <- 3
 
 run_reports <- function(leagueID, per_id = per_id, names) {
   # leagueID=89417258
