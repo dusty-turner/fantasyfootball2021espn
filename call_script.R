@@ -6,7 +6,7 @@ leagueID <- list(89417258)
 # names <- list("jim","headshed","OA","Twitter_Guy")
 # is_dusty = TRUE
 names <- list("OA")
-per_id <- 3
+per_id <- 4
 
 run_reports <- function(leagueID, per_id = per_id, names) {
   # leagueID=89417258
