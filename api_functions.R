@@ -1,7 +1,7 @@
 library(tidyverse)
 library(ggrepel)
 
-get_dashboard_data <- function(leagueID = 89417258, per_id = 3){
+get_dashboard_data <- function(leagueID = 89417258, per_id = 5){
 
   
 get_data <- function(leagueID = leagueID, per_id = per_id){
@@ -317,13 +317,16 @@ team_ids %>%
 
 week_points <-
 team_list %>% 
-  # filter(team == "Syntax Error") %>%
-  # as.data.frame() %>% filter(scoringPeriodId==1) %>%
+  # filter(str_detect(team, "Quart")) %>%
+  # as.data.frame() %>% filter(scoringPeriodId==5) %>%
   filter(lineupSlot_id != 20) %>% 
+  filter(lineupSlot_id != 21) %>% 
   filter(points_type == "actual") %>%
   # arrange(lineupSlot_id)
   group_by(scoringPeriodId, team) %>% 
   summarise(week_points = sum(appliedTotal))
+
+
 
 total_points <-
 team_list %>% 

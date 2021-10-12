@@ -5,7 +5,7 @@ output:
     orientation: rows
     vertical_layout: fill
 params: 
-  per_id: 2
+  per_id: 5
   leagueID: 89417258
 ---
 
