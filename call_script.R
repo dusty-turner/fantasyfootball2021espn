@@ -1,14 +1,17 @@
 library(tidyverse)
 
 
-# leagueID <- list(89417258)
-leagueID <- list(35354777) ## headshed
+leagueID <- list(89417258)
+# leagueID <- list(89417258,35354777) # OA / Headshed
+# leagueID <- list(35354777) ## headshed
+
 # leagueID <- list(847888,35354777,89417258,206814)
 # names <- list("jim","headshed","OA","Twitter_Guy")
 # is_dusty = TRUE
-# names <- list("OA")
-names <- list("headshed")
-per_id <- 8
+names <- list("OA")
+# names <- list("OA","headshed")
+# names <- list("headshed")
+per_id <- 9
 
 run_reports <- function(leagueID, per_id = per_id, names) {
   # leagueID=89417258
