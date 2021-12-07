@@ -11,7 +11,7 @@ leagueID <- list(89417258)
 names <- list("OA")
 # names <- list("OA","headshed")
 # names <- list("headshed")
-per_id <- 11
+per_id <- 12
 
 run_reports <- function(leagueID, per_id = per_id, names) {
   # leagueID=89417258
